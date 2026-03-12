@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Credentials / secrets
+.env
+.env_secrets
+*.key
+*_key
+secrets/
+credentials/
+
+# Claude internal
+.claude/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Redtool runtime
+redtool/__pycache__/
+redtool/modules/__pycache__/

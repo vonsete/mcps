@@ -1,0 +1,186 @@
+{
+  "mcpServers": {
+    "anythingllm": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/anythingllm_mcp_server.py"]
+    },
+    "gdrive": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/gdrive_mcp_server.py"]
+    },
+    "shodan": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/shodan_mcp_server.py"]
+    },
+    "virustotal": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/virustotal_mcp_server.py"]
+    },
+    "abuseipdb": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/abuseipdb_mcp_server.py"]
+    },
+    "greynoise": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/greynoise_mcp_server.py"]
+    },
+    "maltiverse": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/maltiverse_mcp_server.py"]
+    },
+    "criminalip": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/criminalip_mcp_server.py"]
+    },
+    "otx": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/otx_mcp_server.py"]
+    },
+    "pulsedive": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/pulsedive_mcp_server.py"]
+    },
+    "securitytrails": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/securitytrails_mcp_server.py"]
+    },
+    "abusech": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/abusech_mcp_server.py"]
+    },
+    "censys": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/censys_mcp_server.py"]
+    },
+    "dns": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/dns_mcp_server.py"]
+    },
+    "bgp": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/bgp_mcp_server.py"]
+    },
+    "whois": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/whois_mcp_server.py"]
+    },
+    "traceroute": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/traceroute_mcp_server.py"]
+    },
+    "nmap": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/nmap_mcp_server.py"]
+    },
+    "ssl": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/ssl_mcp_server.py"]
+    },
+    "geoip": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/geoip_mcp_server.py"]
+    },
+    "httpheaders": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/httpheaders_mcp_server.py"]
+    },
+    "unifi": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/unifi_mcp_server.py"]
+    },
+    "mikrotik": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/mikrotik_mcp_server.py"]
+    },
+    "snmp": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/snmp_mcp_server.py"]
+    },
+    "ufw": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/ufw_mcp_server.py"]
+    },
+    "cloudflare": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/cloudflare_mcp_server.py"]
+    },
+    "ssh": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/ssh_mcp_server.py"]
+    },
+    "db": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/db_mcp_server.py"]
+    },
+    "jira": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/jira_mcp_server.py"]
+    },
+    "cve": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/cve_mcp_server.py"]
+    },
+    "crtsh": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/crtsh_mcp_server.py"]
+    },
+    "urlscan": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/urlscan_mcp_server.py"]
+    },
+    "nuclei": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/nuclei_mcp_server.py"]
+    },
+    "hybridanalysis": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/hybridanalysis_mcp_server.py"]
+    },
+    "ssh-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "ssh-mcp",
+        "--host=localhost",
+        "--user=claude",
+        "--key=~/.ssh/id_ed25519_claude"
+      ],
+      "env": {}
+    }
+  }
+}

@@ -4,6 +4,11 @@ Collection of 33 standalone MCP (Model Context Protocol) servers written in Pyth
 
 ## Servers
 
+### Threat Intelligence Platform
+| Server | Description |
+|--------|-------------|
+| `misp_mcp_server.py` | MISP: search events/attributes, IOC lookup, create events, manage feeds and tags |
+
 ### Security Intelligence
 | Server | Description |
 |--------|-------------|

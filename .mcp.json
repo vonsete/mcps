@@ -1,5 +1,10 @@
 {
   "mcpServers": {
+    "misp": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/home/alfonso/mcps/misp_mcp_server.py"]
+    },
     "anythingllm": {
       "type": "stdio",
       "command": "python3",

@@ -187,7 +187,7 @@ def misp_add_yara(cfg: dict, event_id: str, sha256: str, yara_rule: str) -> bool
     try:
         r = requests.post(
             f"{cfg['url']}/attributes/add/{event_id}",
-            json={"type": "yara", "category": "Antivirus detection",
+            json={"type": "yara", "category": "Artifacts dropped",
                   "value": yara_rule, "to_ids": False,
                   "comment": f"Auto-generated YARA for {sha256[:16]}"},
             headers=headers, verify=False, timeout=15,

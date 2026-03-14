@@ -43,7 +43,8 @@ SEEN_DB       = Path.home() / ".malware_fetch_seen.json"
 LOCAL_YARA    = Path("/data/yara")
 INTERNXT      = "/usr/local/bin/internxt.py"
 INTERNXT_BASE = "/malware"
-INTERNXT_YARA = "/malware/yara"
+INTERNXT_YARA     = "/malware/yara"
+INTERNXT_ANALYSIS = "/malware/analysis"
 TMPDIR        = Path(tempfile.gettempdir()) / "yara_gen"
 ANTIMALWARE_PY = Path("/home/ubuntu/antimalware/venv/bin/python3")
 ANALYZE_SCRIPT = Path("/home/ubuntu/antimalware/analyze_sample.py")
@@ -430,13 +431,21 @@ def main():
         (LOCAL_YARA / f"{sha256}.yar").write_text(yara_rule)
         print("✓ local", end=" ", flush=True)
 
-        # 6. Subir a Internxt
+        # 6. Subir a Internxt (YARA + JSON de análisis)
         local_yar = LOCAL_YARA / f"{sha256}.yar"
         try:
             internxt_upload(local_yar, INTERNXT_YARA)
             print("✓ Internxt", end=" ", flush=True)
         except Exception as e:
             print(f"✗ Internxt({e})", end=" ", flush=True)
+
+        analysis_json = LOCAL_ANALYSIS / f"{sha256}.json"
+        if analysis_json.exists():
+            try:
+                internxt_upload(analysis_json, INTERNXT_ANALYSIS)
+                print("✓ JSON", end=" ", flush=True)
+            except Exception as e:
+                print(f"✗ JSON({e})", end=" ", flush=True)
 
         # 7. MISP — buscar evento existente o crear uno nuevo por muestra
         event_id = attr_id = None

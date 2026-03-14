@@ -149,6 +149,38 @@ def misp_find_event_id(cfg: dict, sha256: str) -> tuple[str | None, str | None]:
         return None, None
 
 
+def misp_create_event(cfg: dict, info: str, family: str) -> str | None:
+    headers = {"Authorization": cfg["key"], "Accept": "application/json",
+               "Content-Type": "application/json"}
+    try:
+        r = requests.post(
+            f"{cfg['url']}/events/add",
+            json={"info": info, "threat_level_id": 2, "analysis": 1,
+                  "distribution": 0,
+                  "Tag": [{"name": f"malware:{family}"}, {"name": "tlp:amber"}]},
+            headers=headers, verify=False, timeout=15,
+        )
+        return r.json().get("Event", {}).get("id")
+    except Exception:
+        return None
+
+
+def misp_add_sha256(cfg: dict, event_id: str, sha256: str, comment: str = "") -> str | None:
+    headers = {"Authorization": cfg["key"], "Accept": "application/json",
+               "Content-Type": "application/json"}
+    try:
+        r = requests.post(
+            f"{cfg['url']}/attributes/add/{event_id}",
+            json={"type": "sha256", "category": "Payload delivery",
+                  "value": sha256, "to_ids": True, "comment": comment},
+            headers=headers, verify=False, timeout=15,
+        )
+        attr = r.json().get("Attribute", {})
+        return str(attr["id"]) if attr.get("id") else None
+    except Exception:
+        return None
+
+
 def misp_add_yara(cfg: dict, event_id: str, sha256: str, yara_rule: str) -> bool:
     headers = {"Authorization": cfg["key"], "Accept": "application/json",
                "Content-Type": "application/json"}
@@ -406,13 +438,25 @@ def main():
         except Exception as e:
             print(f"✗ Internxt({e})", end=" ", flush=True)
 
-        # 7. Añadir a MISP si existe el evento
+        # 7. MISP — buscar evento existente o crear uno nuevo por muestra
         event_id = attr_id = None
         if misp_cfg:
             event_id, attr_id = misp_find_event_id(misp_cfg, sha256)
             if event_id:
+                # Evento ya existe (batch antiguo): solo añadir YARA
                 ok_misp = misp_add_yara(misp_cfg, event_id, sha256, yara_rule)
                 print("✓ MISP" if ok_misp else "✗ MISP", end=" ")
+            else:
+                # Sin evento: crear uno por muestra con sha256 + YARA
+                event_id = misp_create_event(
+                    misp_cfg, f"{family} — {sha256[:16]}", family)
+                if event_id:
+                    attr_id = misp_add_sha256(misp_cfg, event_id, sha256,
+                                              comment=f"YARA backfill — {family}")
+                    misp_add_yara(misp_cfg, event_id, sha256, yara_rule)
+                    print("✓ MISP-new", end=" ")
+                else:
+                    print("✗ MISP-event", end=" ")
 
         # 8. Aplicar tags antimalware al atributo y al evento
         if misp_cfg and suggested_tags:

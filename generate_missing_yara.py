@@ -131,7 +131,8 @@ def load_misp_config() -> dict | None:
     return cfg
 
 
-def misp_find_event_id(cfg: dict, sha256: str) -> str | None:
+def misp_find_event_id(cfg: dict, sha256: str) -> tuple[str | None, str | None]:
+    """Devuelve (event_id, attr_id) para el sha256, o (None, None)."""
     headers = {"Authorization": cfg["key"], "Accept": "application/json",
                "Content-Type": "application/json"}
     try:
@@ -141,9 +142,11 @@ def misp_find_event_id(cfg: dict, sha256: str) -> str | None:
             headers=headers, verify=False, timeout=15,
         )
         attrs = r.json().get("response", {}).get("Attribute", [])
-        return attrs[0]["event_id"] if attrs else None
+        if attrs:
+            return attrs[0]["event_id"], str(attrs[0]["id"])
+        return None, None
     except Exception:
-        return None
+        return None, None
 
 
 def misp_add_yara(cfg: dict, event_id: str, sha256: str, yara_rule: str) -> bool:
@@ -208,9 +211,9 @@ def misp_add_tags_to_event(cfg: dict, event_id: str, tags: list) -> int:
 
 # ── Antimalware ────────────────────────────────────────────────────────────────
 
-def analyze_with_antimalware(binary_path: Path, sha256: str, family: str) -> list:
+def analyze_with_antimalware(binary_path: Path, sha256: str, family: str) -> dict:
     if not ANTIMALWARE_PY.exists() or not ANALYZE_SCRIPT.exists():
-        return []
+        return {}
     LOCAL_ANALYSIS.mkdir(parents=True, exist_ok=True)
     try:
         subprocess.run(
@@ -220,10 +223,30 @@ def analyze_with_antimalware(binary_path: Path, sha256: str, family: str) -> lis
         )
         out_json = LOCAL_ANALYSIS / f"{sha256}.json"
         if out_json.exists():
-            return json.loads(out_json.read_text()).get("suggested_tags", [])
+            return json.loads(out_json.read_text())
     except Exception:
         pass
-    return []
+    return {}
+
+
+def misp_add_tags_to_attribute(cfg: dict, attr_id: str, tags: list) -> int:
+    headers = {"Authorization": cfg["key"], "Accept": "application/json",
+               "Content-Type": "application/json"}
+    added = 0
+    for tag_name in tags:
+        tag_id = misp_ensure_tag(cfg, tag_name)
+        if not tag_id:
+            continue
+        try:
+            r = requests.post(
+                f"{cfg['url']}/attributes/addTag/{attr_id}/{tag_id}",
+                headers=headers, verify=False, timeout=10,
+            )
+            if r.status_code in (200, 201):
+                added += 1
+        except Exception:
+            pass
+    return added
 
 
 # ── Extracción y YARA ─────────────────────────────────────────────────────────
@@ -353,7 +376,8 @@ def main():
             continue
 
         # 3. Análisis antimalware (mientras el binario existe)
-        suggested_tags = analyze_with_antimalware(binary_path, sha256, family)
+        analysis = analyze_with_antimalware(binary_path, sha256, family)
+        suggested_tags = analysis.get("suggested_tags", [])
         if suggested_tags:
             print(f"✓ AM({len(suggested_tags)})", end=" ", flush=True)
 
@@ -383,18 +407,21 @@ def main():
             print(f"✗ Internxt({e})", end=" ", flush=True)
 
         # 7. Añadir a MISP si existe el evento
-        event_id = None
+        event_id = attr_id = None
         if misp_cfg:
-            event_id = misp_find_event_id(misp_cfg, sha256)
+            event_id, attr_id = misp_find_event_id(misp_cfg, sha256)
             if event_id:
                 ok_misp = misp_add_yara(misp_cfg, event_id, sha256, yara_rule)
                 print("✓ MISP" if ok_misp else "✗ MISP", end=" ")
 
-        # 8. Aplicar tags antimalware al evento MISP
-        if misp_cfg and suggested_tags and event_id:
-            n_tags = misp_add_tags_to_event(misp_cfg, event_id, suggested_tags)
-            if n_tags:
-                print(f"✓ tags({n_tags})", end=" ")
+        # 8. Aplicar tags antimalware al atributo y al evento
+        if misp_cfg and suggested_tags:
+            if attr_id:
+                misp_add_tags_to_attribute(misp_cfg, attr_id, suggested_tags)
+            if event_id:
+                n_tags = misp_add_tags_to_event(misp_cfg, event_id, suggested_tags)
+                if n_tags:
+                    print(f"✓ tags({n_tags})", end=" ")
 
         print()
         ok += 1

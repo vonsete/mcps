@@ -39,15 +39,15 @@ import requests
 # ── Configuración ──────────────────────────────────────────────────────────────
 
 MISP_KEY_FILE = Path.home() / ".misp_key"
-SEEN_DB       = Path.home() / ".malware_fetch_seen.json"
+SEEN_DB       = Path("/data/state/seen.json")
 LOCAL_YARA    = Path("/data/yara")
 INTERNXT      = "/usr/local/bin/internxt.py"
 INTERNXT_BASE = "/malware"
 INTERNXT_YARA     = "/malware/yara"
 INTERNXT_ANALYSIS = "/malware/analysis"
 TMPDIR        = Path(tempfile.gettempdir()) / "yara_gen"
-ANTIMALWARE_PY = Path("/home/ubuntu/antimalware/venv/bin/python3")
-ANALYZE_SCRIPT = Path("/home/ubuntu/antimalware/analyze_sample.py")
+ANTIMALWARE_PY = Path("/data/antimalware/venv/bin/python3")
+ANALYZE_SCRIPT = Path("/data/antimalware/analyze_sample.py")
 LOCAL_ANALYSIS = Path("/data/analysis")
 
 _YARA_BLACKLIST = [

@@ -35,6 +35,8 @@ except ImportError:
     _HAS_PYZIPPER = False
 
 import requests
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # ── Configuración ──────────────────────────────────────────────────────────────
 
@@ -157,7 +159,7 @@ def misp_create_event(cfg: dict, info: str, family: str) -> str | None:
         r = requests.post(
             f"{cfg['url']}/events/add",
             json={"info": info, "threat_level_id": 2, "analysis": 1,
-                  "distribution": 0,
+                  "distribution": 1,
                   "Tag": [{"name": f"malware:{family}"}, {"name": "tlp:amber"}]},
             headers=headers, verify=False, timeout=15,
         )
